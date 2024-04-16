@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const node_cron_1 = __importDefault(require("node-cron"));
 require("dotenv/config");
 const app = (0, express_1.default)();
 const PORT = process.env.PORT;
@@ -18,4 +19,8 @@ app.get("/", (req, res) => {
 });
 app.listen(PORT, () => {
     console.log(`Listening on Port ${PORT}`);
+});
+// Schedule a cron job to log "hi" every 10 seconds
+node_cron_1.default.schedule("*/10 * * * * *", () => {
+    console.log("hi");
 });
