@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from "express";
+import path from "path";
 // import cron from "node-cron";
 import "dotenv/config";
 import { connectDb } from "./database/db-connect";
@@ -9,6 +10,8 @@ const app: Express = express();
 const PORT = process.env.PORT;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use("/files", express.static(path.join(__dirname, "../files")));
 
 //  for the routes
 app.use("/user", User); // User intitial path;

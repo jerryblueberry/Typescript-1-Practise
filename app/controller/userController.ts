@@ -6,6 +6,13 @@ import { sendSignupMail } from "../utils/mailer";
 
 const saltRounds: number = 10;
 
+//  password validator
+const validatePassword = (password: string): boolean => {
+  // Password must contain at least one capital letter, one symbol, one number, and be at least 8 characters long
+  const passwordRegex: RegExp = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
+  return passwordRegex.test(password);
+};
+
 export const handleSignup = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password, longitude, latitude } = req.body;
@@ -19,17 +26,28 @@ export const handleSignup = async (req: Request, res: Response): Promise<void> =
 
     // Check for the existing user
     const existingUser: IUser | null = await User.findOne({ email });
+
     if (existingUser) {
       res.status(402).json({ error: "Email Already exists! Instead try login" });
       return;
     }
+    //  password validate
+    if (!validatePassword(password)) {
+      res.status(400).json({
+        error:
+          "Password must contain at least one capital letter, one symbol, one number, and be at least 8 characters long",
+      });
+      return;
+    }
 
     const hashedPassword: string = await bcrypt.hash(password, saltRounds);
+    const profileImage = req.file ? req.file.path : null;
     const newUser: IUser = new User({
       name,
       email,
       password: hashedPassword,
       role: "User",
+      profileImage: profileImage || null,
       OTP: otp,
       location: {
         type: "Point",

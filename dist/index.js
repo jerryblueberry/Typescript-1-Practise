@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const path_1 = __importDefault(require("path"));
 // import cron from "node-cron";
 require("dotenv/config");
 const db_connect_1 = require("./database/db-connect");
@@ -13,6 +14,7 @@ const app = (0, express_1.default)();
 const PORT = process.env.PORT;
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
+app.use("/files", express_1.default.static(path_1.default.join(__dirname, "../files")));
 //  for the routes
 app.use("/user", user_route_1.default); // User intitial path;
 app.get("/", (req, res) => {
