@@ -4,11 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const node_cron_1 = __importDefault(require("node-cron"));
+// import cron from "node-cron";
 require("dotenv/config");
+const db_connect_1 = require("./database/db-connect");
+//  for the routes
+const user_route_1 = __importDefault(require("./routes/user-route"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT;
 app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: false }));
+//  for the routes
+app.use("/user", user_route_1.default); // User intitial path;
 app.get("/", (req, res) => {
     try {
         res.send("Hello World");
@@ -19,8 +25,9 @@ app.get("/", (req, res) => {
 });
 app.listen(PORT, () => {
     console.log(`Listening on Port ${PORT}`);
+    (0, db_connect_1.connectDb)();
 });
-// Schedule a cron job to log "hi" every 10 seconds
-node_cron_1.default.schedule("*/10 * * * * *", () => {
-    console.log("hi");
-});
+// // Schedule a cron job to log "hi" every 10 seconds
+// cron.schedule("*/10 * * * * *", () => {
+//   console.log("hi");
+// });
